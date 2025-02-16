@@ -3,12 +3,16 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# db_env values
-user = 'root'
-passwd = 'P@ssw0rd'
-host = 'localhost'
-port = 3306
-db = 'flightstat_db'
+from dotenv import load_dotenv
+import os
+
+# load and get .env values
+load_dotenv()
+user = os.getenv("DB_USER")
+passwd = os.getenv("DB_PASS")
+host = os.getenv("DB_HOST")
+port = os.getenv("DB_PORT")
+db = os.getenv("DB_NAME")
 
 # DB configuration
 DATABASE_URL = sqlalchemy.engine.URL.create(drivername="mysql", username=user, password=passwd, host=host, port=port, database=db)

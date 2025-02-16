@@ -1,6 +1,9 @@
+import logging
 from lxml import html
 import requests
-import json
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 class flightStatScraper():
 
@@ -12,10 +15,19 @@ class flightStatScraper():
         url = f'https://www.flightstats.com/v2/flight-tracker/{airlineCode}/{airlineNo}?year={year}&month={month}&date={day}'
 
         # Request the page
-        page = requests.get(url)
-        
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            logger.error("request failed: %s", e)
+            return [{"flightNo": ""}]
+
         # Parsing the page
-        flightStat = html.fromstring(page.content)
+        try:
+            flightStat = html.fromstring(response.content)
+        except Exception as e:
+            logger.error("HTML parse failed: %s", e)
+            return [{"flightNo": ""}]
         
         # Get elements (flight info)
         flightNo = ''.join(flightStat.xpath('//*[@id="__next"]/div/section/div[1]/div/div[2]/div/div[1]/div[1]/div[1]/div[1]/div/div[1]/div[1]/text()'))
@@ -74,5 +86,5 @@ class flightStatScraper():
             "arrivalTimeZone" : arrivalTimeZone,
         })
         
-        print(infoList)
+        logger.info("__scrapped data__: %s", infoList)
         return infoList
