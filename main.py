@@ -22,7 +22,7 @@ def get_db():
         db.close()
 
 @app.get("/api/v1/flights")
-async def get_flight(
+def get_flight(
     airline_code: str = Query(..., description="Airline code"),
     airline_no: str = Query(..., description="Flight number"),
     date: str = Query(..., description="Flight date (YYYY-MM-DD)")
@@ -37,7 +37,7 @@ async def get_flight(
     return item
 
 @app.post("/api/v1/flights", response_model=Dict[str, Any])
-async def insert_flight(
+def insert_flight(
     airline_code: str = Query(..., description="Airline code"),
     airline_no: str = Query(..., description="Flight number"),
     date: str = Query(..., description="Flight date (YYYY-MM-DD)"),
